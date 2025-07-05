@@ -1,18 +1,43 @@
 import React, { useState } from 'react';
-import { AppRegistry, StyleSheet, Text, View, TextInput, Image, TouchableOpacity } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Image,
+  TouchableOpacity,
+  Alert,
+  AppRegistry
+} from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { StatusBar } from 'expo-status-bar';
-import { name as appName } from './app.json'; // Ensure app.json has "name": "main" or appropriate value
+import { name as appName } from './app.json';
+import Product from './product-list';
 
-function App() {
+const Stack = createNativeStackNavigator();
+
+function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
+  const handleLogin = () => {
+    const dummyEmail = 'admin@example.com';
+    const dummyPassword = '123456';
+
+    if (email === dummyEmail && password === dummyPassword) {
+      navigation.navigate('Product');
+    } else {
+      Alert.alert('Login Failed', 'Invalid email or password.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.topSection}>
-        <Image source={require('./assets/logo.png')} style={styles.logo}/>
+        <Image source={require('./assets/logo.png')} style={styles.logo} />
       </View>
 
       <View style={styles.loginSection}>
@@ -42,7 +67,7 @@ function App() {
           <Text style={styles.rememberText}>Remember me</Text>
         </View>
 
-        <TouchableOpacity style={styles.loginButton}>
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
           <Text style={styles.loginText}>LOGIN</Text>
         </TouchableOpacity>
       </View>
@@ -52,9 +77,18 @@ function App() {
   );
 }
 
-AppRegistry.registerComponent(appName, () => App);
+function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Product" component={Product} options={{ headerShown: false }} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
 
-// You can optionally export App if needed for Expo Go
+AppRegistry.registerComponent(appName, () => App);
 export default App;
 
 const styles = StyleSheet.create({
